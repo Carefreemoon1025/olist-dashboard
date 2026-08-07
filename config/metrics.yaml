@@ -1,0 +1,25 @@
+﻿metrics:
+  order_count:
+    name: "订单量"
+    formula: "COUNT(DISTINCT order_id)"
+    definition: "有效订单数量，按 order_id 去重。"
+  paid_amount:
+    name: "支付金额"
+    formula: "SUM(order_total_value + freight_value)"
+    definition: "订单商品金额与运费金额之和。"
+  average_order_value:
+    name: "客单价"
+    formula: "paid_amount / order_count"
+    definition: "支付金额除以有效订单数量。"
+  late_delivery_rate:
+    name: "订单延迟率"
+    formula: "AVG(late_flag)"
+    definition: "late_flag 不为空订单中的延迟订单占比。"
+  average_delivery_days:
+    name: "平均配送天数"
+    formula: "AVG(delivery_days)"
+    definition: "已送达订单从下单到送达的平均天数。"
+  average_review_score:
+    name: "平均评价分"
+    formula: "AVG(review_score)"
+    definition: "订单评价分数的平均值。"
