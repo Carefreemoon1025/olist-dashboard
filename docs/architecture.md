@@ -1,4 +1,4 @@
-# 项目架构
+﻿# 项目架构
 
 ## 总体设计
 
@@ -16,7 +16,7 @@ flowchart TB
     F --> H
     G --> H
     H --> I["Plotly 图表 / Markdown 报告"]
-    G --> J["OpenAI-compatible LLM 可选"]
+    G --> J["DeepSeek V4 Flash / OpenAI-compatible LLM 可选"]
 ```
 
 ## 模块职责
@@ -83,3 +83,4 @@ sequenceDiagram
 项目同时维护订单粒度 mart_order_analysis 和商品明细粒度 fact_order_items。订单量、延迟率和模型使用订单粒度；品类、卖家销售额使用商品明细粒度，避免多卖家/多品类订单被归给第一条明细。
 
 真实数据与演示数据使用不同目录和不同 DuckDB 文件，建仓时保存源文件 SHA-256 指纹。
+

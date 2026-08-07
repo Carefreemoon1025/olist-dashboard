@@ -38,7 +38,7 @@ Olist CSV
 - Plotly
 - Scikit-learn
 - SciPy
-- OpenAI-compatible API（可接入 DeepSeek、智谱、通义等兼容接口）
+- DeepSeek V4 Flash（通过 OpenAI-compatible API 接入，也保留自定义兼容模型配置）
 - Pytest
 
 ## 快速开始
@@ -112,15 +112,25 @@ streamlit run app.py
 
 项目会优先读取完整的真实数据；如果真实数据不完整，应用会在独立的 `data/demo_raw/` 中使用可复现的演示数据，不会覆盖 `data/raw/` 中的文件。仓库会记录源文件指纹，数据变化后自动重建。
 
-## 可选：启用大模型分析
+## 可选：启用 DeepSeek V4 Flash 分析
 
-没有 API Key 时，AI 分析助手使用本地模板，项目仍然可以完整运行。需要接入兼容 OpenAI SDK 的模型时，设置：
+项目默认使用 DeepSeek V4 Flash 生成经营分析解释。没有 API Key 时，AI 分析助手会自动使用本地模板，项目仍然可以完整运行。
+
+推荐在启动应用的 PowerShell 窗口中设置环境变量：
+
+```powershell
+$env:DEEPSEEK_API_KEY = "your-deepseek-api-key"
+$env:LLM_BASE_URL = "https://api.deepseek.com"
+$env:LLM_MODEL = "deepseek-v4-flash"
+```
+
+也可以使用通用变量名：
 
 ```powershell
 $env:LLM_API_KEY = "your-api-key"
-$env:LLM_BASE_URL = "https://your-compatible-endpoint/v1"
-$env:LLM_MODEL = "your-model-name"
 ```
+
+其中 `DEEPSEEK_API_KEY` 的优先级高于 `LLM_API_KEY` 和 `OPENAI_API_KEY`。如果需要替换为其他 OpenAI-compatible 服务，只需要修改 `LLM_BASE_URL` 和 `LLM_MODEL`。
 
 大模型的职责只包括：
 
@@ -208,4 +218,4 @@ python -m pytest -q -p no:cacheprovider
 
 ## 简历项目描述示例
 
-> **Olist 电商经营分析 Copilot**：基于 Olist 电商订单数据，使用 Pandas、DuckDB 和 Streamlit 构建订单、商品、卖家及地区指标体系，实现经营表现、物流履约和用户评价的交互式分析；使用 Logistic Regression 建立订单延迟风险预测模型，并通过受控式自然语言查询和 OpenAI-compatible LLM 自动生成带数据依据的经营分析报告。
+> **Olist 电商经营分析 Copilot**：基于 Olist 电商订单数据，使用 Pandas、DuckDB 和 Streamlit 构建订单、商品、卖家及地区指标体系，实现经营表现、物流履约和用户评价的交互式分析；使用 Logistic Regression 建立订单延迟风险预测模型，并通过受控式自然语言查询和 DeepSeek V4 Flash 自动生成带数据依据的经营分析报告。

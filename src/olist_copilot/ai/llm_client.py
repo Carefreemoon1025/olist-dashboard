@@ -1,21 +1,36 @@
-﻿"""Optional OpenAI-compatible LLM adapter with evidence-first local fallback."""
+﻿"""DeepSeek V4 Flash adapter with evidence-first local fallback."""
 from __future__ import annotations
 
 import os
 from typing import Any
 
+DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEFAULT_DEEPSEEK_MODEL = "deepseek-v4-flash"
+
+
+def get_llm_settings() -> dict[str, str | None]:
+    """Return the configured DeepSeek/OpenAI-compatible LLM settings."""
+    return {
+        "api_key": (
+            os.getenv("DEEPSEEK_API_KEY")
+            or os.getenv("LLM_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
+        ),
+        "base_url": os.getenv("LLM_BASE_URL") or DEFAULT_DEEPSEEK_BASE_URL,
+        "model": os.getenv("LLM_MODEL") or DEFAULT_DEEPSEEK_MODEL,
+    }
+
 
 def _client():
-    api_key = os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
-    if not api_key:
+    settings = get_llm_settings()
+    if not settings["api_key"]:
         return None
     from openai import OpenAI
 
-    kwargs = {"api_key": api_key}
-    base_url = os.getenv("LLM_BASE_URL")
-    if base_url:
-        kwargs["base_url"] = base_url
-    return OpenAI(**kwargs)
+    return OpenAI(
+        api_key=settings["api_key"],
+        base_url=settings["base_url"],
+    )
 
 
 def _evidence(result: list[dict[str, Any]], metric_name: str) -> str:
@@ -48,8 +63,9 @@ def generate_insight(question: str, result: list[dict[str, Any]], metric_name: s
             f"用户问题：{question}\n数据证据：\n{evidence}"
         )
         try:
+            settings = get_llm_settings()
             response = client.with_options(timeout=20.0).chat.completions.create(
-                model=os.getenv("LLM_MODEL", "deepseek-chat"),
+                model=settings["model"],
                 messages=[
                     {"role": "system", "content": "你负责生成可追溯的电商分析叙述。"},
                     {"role": "user", "content": prompt},

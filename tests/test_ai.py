@@ -1,4 +1,4 @@
-﻿from olist_copilot.ai.intent_parser import parse_intent
+from olist_copilot.ai.intent_parser import parse_intent
 from olist_copilot.ai.guardrails import validate_intent
 
 
@@ -47,3 +47,31 @@ def test_local_insight_fallback_includes_top_result_evidence(monkeypatch):
 
     assert "SP" in text
     assert "0.4200" in text
+
+def test_deepseek_v4_flash_is_the_default_llm_configuration(monkeypatch):
+    from olist_copilot.ai.llm_client import get_llm_settings
+
+    for name in ("LLM_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "LLM_BASE_URL", "LLM_MODEL"):
+        monkeypatch.delenv(name, raising=False)
+
+    settings = get_llm_settings()
+
+    assert settings["model"] == "deepseek-v4-flash"
+    assert settings["base_url"] == "https://api.deepseek.com"
+    assert settings["api_key"] is None
+
+
+def test_deepseek_environment_variables_override_llm_defaults(monkeypatch):
+    from olist_copilot.ai.llm_client import get_llm_settings
+
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-deepseek-key")
+    monkeypatch.setenv("LLM_BASE_URL", "https://example.test/v1")
+    monkeypatch.setenv("LLM_MODEL", "custom-model")
+
+    settings = get_llm_settings()
+
+    assert settings == {
+        "api_key": "test-deepseek-key",
+        "base_url": "https://example.test/v1",
+        "model": "custom-model",
+    }

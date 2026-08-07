@@ -1,4 +1,4 @@
-"""Streamlit application for the Olist E-commerce Analytics Copilot."""
+﻿"""Streamlit application for the Olist E-commerce Analytics Copilot."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -188,7 +188,7 @@ def delivery_page(mart: pd.DataFrame):
 
 def assistant_page(mart: pd.DataFrame, item_mart: pd.DataFrame):
     st.subheader("AI 分析助手")
-    st.info("助手采用‘意图识别 → 受控分析函数 → DuckDB/指标计算 → AI 解释’流程。没有 API Key 时自动使用本地模板，不影响演示。")
+    st.info("助手默认使用 DeepSeek V4 Flash，采用意图识别、受控分析函数、DuckDB 指标计算和 AI 解释的流程。没有 API Key 时自动使用本地模板，不影响演示。")
     question = st.text_input("请输入业务问题", value="哪些地区的订单延迟率最高？")
     if st.button("开始分析", type="primary"):
         answer = answer_question(mart, question, item_mart=item_mart)
@@ -254,3 +254,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
