@@ -1,0 +1,17 @@
+﻿__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+env/
+.deps/
+.env
+.streamlit/secrets.toml
+
+# 可重复生成的数据库和模型产物
+/data/warehouse/*.duckdb
+/models/*.joblib
+/artifacts/
+
+# 保留小规模演示数据；如果替换为真实数据，请不要提交原始数据

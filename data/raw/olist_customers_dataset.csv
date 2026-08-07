@@ -1,0 +1,121 @@
+customer_id,customer_unique_id,customer_zip_code_prefix,customer_city,customer_state
+customer_0000,unique_0000,63795,Belo Horizonte,MG
+customer_0001,unique_0001,78690,Sao Paulo,SP
+customer_0002,unique_0002,84850,Belo Horizonte,MG
+customer_0003,unique_0003,2765,Rio de Janeiro,RJ
+customer_0004,unique_0004,66691,Belo Horizonte,MG
+customer_0005,unique_0005,11805,Sao Paulo,SP
+customer_0006,unique_0006,29504,Sao Paulo,SP
+customer_0007,unique_0007,83112,Sao Paulo,SP
+customer_0008,unique_0008,25800,Rio de Janeiro,RJ
+customer_0009,unique_0009,79884,Sao Paulo,SP
+customer_0010,unique_0010,46837,Sao Paulo,SP
+customer_0011,unique_0011,24031,Sao Paulo,SP
+customer_0012,unique_0012,34089,Rio de Janeiro,RJ
+customer_0013,unique_0013,53545,Sao Paulo,SP
+customer_0014,unique_0014,76748,Curitiba,PR
+customer_0015,unique_0015,60994,Rio de Janeiro,RJ
+customer_0016,unique_0016,93388,Sao Paulo,SP
+customer_0017,unique_0017,86905,Rio de Janeiro,RJ
+customer_0018,unique_0018,75581,Sao Paulo,SP
+customer_0019,unique_0019,60707,Porto Alegre,RS
+customer_0020,unique_0020,29695,Rio de Janeiro,RJ
+customer_0021,unique_0021,41844,Salvador,BA
+customer_0022,unique_0022,12770,Sao Paulo,SP
+customer_0023,unique_0023,38043,Rio de Janeiro,RJ
+customer_0024,unique_0024,92719,Rio de Janeiro,RJ
+customer_0025,unique_0025,43161,Porto Alegre,RS
+customer_0026,unique_0026,12259,Rio de Janeiro,RJ
+customer_0027,unique_0027,65540,Rio de Janeiro,RJ
+customer_0028,unique_0028,96297,Sao Paulo,SP
+customer_0029,unique_0029,86880,Sao Paulo,SP
+customer_0030,unique_0030,28133,Rio de Janeiro,RJ
+customer_0031,unique_0031,45935,Sao Paulo,SP
+customer_0032,unique_0032,53570,Sao Paulo,SP
+customer_0033,unique_0033,25535,Salvador,BA
+customer_0034,unique_0034,27600,Curitiba,PR
+customer_0035,unique_0035,24429,Sao Paulo,SP
+customer_0036,unique_0036,99462,Rio de Janeiro,RJ
+customer_0037,unique_0037,74854,Sao Paulo,SP
+customer_0038,unique_0038,84243,Belo Horizonte,MG
+customer_0039,unique_0039,81839,Sao Paulo,SP
+customer_0040,unique_0040,95954,Belo Horizonte,MG
+customer_0041,unique_0041,11422,Belo Horizonte,MG
+customer_0042,unique_0042,88280,Salvador,BA
+customer_0043,unique_0043,7589,Sao Paulo,SP
+customer_0044,unique_0044,48066,Curitiba,PR
+customer_0045,unique_0045,59848,Sao Paulo,SP
+customer_0046,unique_0046,36427,Sao Paulo,SP
+customer_0047,unique_0047,15471,Rio de Janeiro,RJ
+customer_0048,unique_0048,20037,Sao Paulo,SP
+customer_0049,unique_0049,82640,Salvador,BA
+customer_0050,unique_0050,32553,Salvador,BA
+customer_0051,unique_0051,31722,Sao Paulo,SP
+customer_0052,unique_0052,92411,Porto Alegre,RS
+customer_0053,unique_0053,15243,Sao Paulo,SP
+customer_0054,unique_0054,91610,Rio de Janeiro,RJ
+customer_0055,unique_0055,92175,Sao Paulo,SP
+customer_0056,unique_0056,60256,Porto Alegre,RS
+customer_0057,unique_0057,17387,Sao Paulo,SP
+customer_0058,unique_0058,16430,Sao Paulo,SP
+customer_0059,unique_0059,29187,Sao Paulo,SP
+customer_0060,unique_0060,58163,Porto Alegre,RS
+customer_0061,unique_0061,16207,Curitiba,PR
+customer_0062,unique_0062,46109,Salvador,BA
+customer_0063,unique_0063,12433,Curitiba,PR
+customer_0064,unique_0064,54487,Curitiba,PR
+customer_0065,unique_0065,3093,Rio de Janeiro,RJ
+customer_0066,unique_0066,71193,Sao Paulo,SP
+customer_0067,unique_0067,6484,Salvador,BA
+customer_0068,unique_0068,20287,Belo Horizonte,MG
+customer_0069,unique_0069,18289,Sao Paulo,SP
+customer_0070,unique_0070,83267,Sao Paulo,SP
+customer_0071,unique_0071,6284,Salvador,BA
+customer_0072,unique_0072,43496,Sao Paulo,SP
+customer_0073,unique_0073,59522,Porto Alegre,RS
+customer_0074,unique_0074,52083,Sao Paulo,SP
+customer_0075,unique_0075,68390,Sao Paulo,SP
+customer_0076,unique_0076,80506,Salvador,BA
+customer_0077,unique_0077,39969,Sao Paulo,SP
+customer_0078,unique_0078,82992,Sao Paulo,SP
+customer_0079,unique_0079,32480,Rio de Janeiro,RJ
+customer_0080,unique_0080,98456,Curitiba,PR
+customer_0081,unique_0081,50947,Sao Paulo,SP
+customer_0082,unique_0082,73864,Sao Paulo,SP
+customer_0083,unique_0083,87624,Salvador,BA
+customer_0084,unique_0084,79471,Porto Alegre,RS
+customer_0085,unique_0085,85261,Rio de Janeiro,RJ
+customer_0086,unique_0086,54114,Sao Paulo,SP
+customer_0087,unique_0087,5303,Sao Paulo,SP
+customer_0088,unique_0088,49814,Sao Paulo,SP
+customer_0089,unique_0089,18968,Sao Paulo,SP
+customer_0090,unique_0090,89021,Belo Horizonte,MG
+customer_0091,unique_0091,24437,Sao Paulo,SP
+customer_0092,unique_0092,23578,Rio de Janeiro,RJ
+customer_0093,unique_0093,25689,Belo Horizonte,MG
+customer_0094,unique_0094,64613,Rio de Janeiro,RJ
+customer_0095,unique_0095,57551,Sao Paulo,SP
+customer_0096,unique_0096,94934,Salvador,BA
+customer_0097,unique_0097,42209,Belo Horizonte,MG
+customer_0098,unique_0098,28945,Belo Horizonte,MG
+customer_0099,unique_0099,5876,Sao Paulo,SP
+customer_0100,unique_0100,1700,Sao Paulo,SP
+customer_0101,unique_0101,37987,Curitiba,PR
+customer_0102,unique_0102,92654,Sao Paulo,SP
+customer_0103,unique_0103,52851,Sao Paulo,SP
+customer_0104,unique_0104,89460,Rio de Janeiro,RJ
+customer_0105,unique_0105,11065,Belo Horizonte,MG
+customer_0106,unique_0106,10238,Porto Alegre,RS
+customer_0107,unique_0107,83511,Sao Paulo,SP
+customer_0108,unique_0108,11567,Curitiba,PR
+customer_0109,unique_0109,6144,Sao Paulo,SP
+customer_0110,unique_0110,41004,Rio de Janeiro,RJ
+customer_0111,unique_0111,92558,Belo Horizonte,MG
+customer_0112,unique_0112,69248,Sao Paulo,SP
+customer_0113,unique_0113,10812,Sao Paulo,SP
+customer_0114,unique_0114,83875,Sao Paulo,SP
+customer_0115,unique_0115,84513,Porto Alegre,RS
+customer_0116,unique_0116,80268,Rio de Janeiro,RJ
+customer_0117,unique_0117,90361,Porto Alegre,RS
+customer_0118,unique_0118,24747,Salvador,BA
+customer_0119,unique_0119,97976,Rio de Janeiro,RJ
