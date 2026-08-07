@@ -1,4 +1,4 @@
-﻿__pycache__/
+__pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
@@ -15,3 +15,6 @@ env/
 /artifacts/
 
 # 保留小规模演示数据；如果替换为真实数据，请不要提交原始数据
+
+.test-temp/
+/data/processed/

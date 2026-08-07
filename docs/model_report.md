@@ -1,4 +1,4 @@
-﻿# 延迟风险模型报告
+# 延迟风险模型报告
 
 ## 业务问题
 
@@ -24,7 +24,7 @@
 
 ## 模型
 
-第一版使用 Logistic Regression 作为可解释基线模型。项目代码同时支持 Random Forest，以便比较线性模型和非线性模型。
+第一版使用 Logistic Regression 作为可解释基线模型。项目代码同时支持 Random Forest，以便比较线性模型和非线性模型。评估默认按订单购买时间做 temporal holdout，用历史订单训练、较晚订单测试。
 
 ## 评估指标
 

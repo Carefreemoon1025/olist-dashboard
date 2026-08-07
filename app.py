@@ -1,4 +1,4 @@
-﻿"""Streamlit application for the Olist E-commerce Analytics Copilot."""
+"""Streamlit application for the Olist E-commerce Analytics Copilot."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,10 +10,10 @@ import streamlit as st
 from olist_copilot.ai.llm_client import generate_insight
 from olist_copilot.ai.query_planner import answer_question
 from olist_copilot.analytics.abtest import proportion_test
-from olist_copilot.analytics.services import delivery_review_comparison, monthly_trend, ranking_by_dimension, seller_performance
-from olist_copilot.config import DATA_ROOT, DEFAULT_DB_PATH
+from olist_copilot.analytics.services import delivery_review_comparison, load_item_mart, monthly_trend, ranking_by_dimension, seller_performance
+from olist_copilot.config import DATA_ROOT, DEFAULT_DB_PATH, DEMO_DATA_ROOT, DEMO_DB_PATH, RAW_DATA_ROOT
 from olist_copilot.data_pipeline.demo_data import generate_demo_dataset
-from olist_copilot.data_pipeline.pipeline import build_warehouse, discover_olist_files
+from olist_copilot.data_pipeline.pipeline import REQUIRED_TABLES, build_warehouse, discover_olist_files, resolve_source_files, warehouse_is_fresh
 from olist_copilot.metrics.calculator import calculate_kpis
 from olist_copilot.ml.late_delivery import build_features, evaluate_classifier, train_late_delivery_model
 
@@ -23,15 +23,18 @@ st.set_page_config(page_title="Olist 电商经营分析 Copilot", page_icon="�
 
 @st.cache_resource(show_spinner="正在准备演示数据和 DuckDB 仓库...")
 def ensure_warehouse() -> str:
-    raw_dir = DATA_ROOT / "raw"
-    files = discover_olist_files(raw_dir)
-    required = {"orders", "order_items", "products", "sellers", "customers", "reviews"}
-    if not required.issubset(files):
-        generate_demo_dataset(raw_dir, seed=42, n_orders=240)
-        files = discover_olist_files(raw_dir)
-    if not DEFAULT_DB_PATH.exists():
-        build_warehouse(files, DEFAULT_DB_PATH)
-    return str(DEFAULT_DB_PATH)
+    raw_files = discover_olist_files(RAW_DATA_ROOT)
+    if REQUIRED_TABLES.issubset(raw_files):
+        files, is_demo = resolve_source_files(RAW_DATA_ROOT, DEMO_DATA_ROOT)
+    else:
+        demo_files = discover_olist_files(DEMO_DATA_ROOT)
+        if not REQUIRED_TABLES.issubset(demo_files):
+            generate_demo_dataset(DEMO_DATA_ROOT, seed=42, n_orders=240)
+        files, is_demo = resolve_source_files(RAW_DATA_ROOT, DEMO_DATA_ROOT)
+    db_path = DEMO_DB_PATH if is_demo else DEFAULT_DB_PATH
+    if not warehouse_is_fresh(db_path, files):
+        build_warehouse(files, db_path)
+    return str(db_path)
 
 
 @st.cache_data(show_spinner=False)
@@ -46,8 +49,23 @@ def load_data(db_path: str) -> pd.DataFrame:
 @st.cache_resource(show_spinner="正在训练延迟风险模型...")
 def train_model(mart: pd.DataFrame):
     features, target = build_features(mart)
-    model, metrics = train_late_delivery_model(features, target, model_type="logistic")
+    timestamps = None
+    if "order_purchase_timestamp" in mart.columns:
+        timestamps = mart.loc[target.index, "order_purchase_timestamp"]
+    model, metrics = train_late_delivery_model(
+        features,
+        target,
+        model_type="logistic",
+        timestamps=timestamps,
+    )
     return model, metrics, features, target
+
+
+@st.cache_data(show_spinner=False)
+def load_item_data(db_path: str) -> pd.DataFrame:
+    frame = load_item_mart(db_path)
+    frame["order_purchase_timestamp"] = pd.to_datetime(frame["order_purchase_timestamp"], errors="coerce")
+    return frame
 
 
 def money(value: float) -> str:
@@ -58,7 +76,7 @@ def pct(value: float) -> str:
     return f"{value * 100:.1f}%"
 
 
-def render_sidebar(mart: pd.DataFrame) -> pd.DataFrame:
+def render_sidebar(mart: pd.DataFrame, item_mart: pd.DataFrame) -> pd.DataFrame:
     st.sidebar.header("筛选条件")
     min_date = mart["order_purchase_timestamp"].min().date()
     max_date = mart["order_purchase_timestamp"].max().date()
@@ -69,22 +87,22 @@ def render_sidebar(mart: pd.DataFrame) -> pd.DataFrame:
         start = end = date_range
     states = sorted(mart["customer_state"].dropna().unique().tolist())
     selected_states = st.sidebar.multiselect("用户州", states, default=states)
-    categories = sorted(mart["product_category"].dropna().unique().tolist())
+    categories = sorted(item_mart["product_category"].dropna().unique().tolist())
     selected_categories = st.sidebar.multiselect("商品品类", categories, default=categories)
-    filtered = mart[
-        (mart["order_purchase_timestamp"].dt.date >= start)
-        & (mart["order_purchase_timestamp"].dt.date <= end)
-        & mart["customer_state"].isin(selected_states)
-        & mart["product_category"].isin(selected_categories)
-    ].copy()
-    st.sidebar.caption(f"当前筛选：{len(filtered):,} 条订单明细")
+    item_scope = item_mart[
+        (item_mart["order_purchase_timestamp"].dt.date >= start)
+        & (item_mart["order_purchase_timestamp"].dt.date <= end)
+        & item_mart["customer_state"].isin(selected_states)
+        & item_mart["product_category"].isin(selected_categories)
+    ]
+    filtered = mart[mart["order_id"].isin(item_scope["order_id"])].copy()
+    st.sidebar.caption(f"当前筛选：{len(filtered):,} 条订单")
     st.sidebar.divider()
     st.sidebar.markdown("**运行模式**")
     st.sidebar.caption("默认使用可复现的 Olist 演示数据。将真实 Olist CSV 放入 data/raw/ 后重新构建仓库即可替换数据。")
     return filtered
 
-
-def overview_page(mart: pd.DataFrame):
+def overview_page(mart: pd.DataFrame, item_mart: pd.DataFrame):
     st.subheader("经营总览")
     kpis = calculate_kpis(mart)
     columns = st.columns(6)
@@ -106,7 +124,7 @@ def overview_page(mart: pd.DataFrame):
 
     left, right = st.columns(2)
     with left:
-        category = ranking_by_dimension(mart, "paid_amount", "product_category", 10)
+        category = ranking_by_dimension(item_mart, "paid_amount", "product_category", 10)
         fig = px.bar(category, x="paid_amount", y="product_category", orientation="h", title="品类支付金额排名", labels={"paid_amount": "支付金额", "product_category": "品类"})
         fig.update_layout(yaxis={"categoryorder": "total ascending"})
         st.plotly_chart(fig, use_container_width=True)
@@ -116,21 +134,20 @@ def overview_page(mart: pd.DataFrame):
         fig = px.bar(states, x="customer_state", y="late_delivery_rate", title="地区订单延迟率", labels={"customer_state": "用户州", "late_delivery_rate": "延迟率（%）"})
         st.plotly_chart(fig, use_container_width=True)
 
-
-def product_seller_page(mart: pd.DataFrame):
+def product_seller_page(mart: pd.DataFrame, item_mart: pd.DataFrame):
     st.subheader("商品与卖家分析")
     left, right = st.columns(2)
     with left:
-        category = ranking_by_dimension(mart, "order_count", "product_category", 10)
+        category = ranking_by_dimension(item_mart, "order_count", "product_category", 10)
         st.markdown("#### 品类订单量")
         st.dataframe(category, use_container_width=True, hide_index=True)
     with right:
-        sellers = seller_performance(mart, 15)
+        sellers = seller_performance(item_mart, 15)
         st.markdown("#### 卖家表现")
         st.dataframe(sellers, use_container_width=True, hide_index=True)
 
     st.markdown("#### 高订单量但低评价卖家")
-    sellers = seller_performance(mart, 30)
+    sellers = seller_performance(item_mart, 30)
     if len(sellers) > 0:
         threshold = sellers["order_count"].quantile(0.6)
         risk_sellers = sellers[(sellers["order_count"] >= threshold) & (sellers["average_review_score"] < sellers["average_review_score"].median())]
@@ -157,7 +174,7 @@ def delivery_page(mart: pd.DataFrame):
             st.warning(str(exc))
             return
 
-    st.markdown("#### 单笔订单风险演示")
+    st.markdown("#### 历史订单风险回放")
     try:
         model, _, features, target = train_model(mart)
         sample = features.head(1)
@@ -169,12 +186,12 @@ def delivery_page(mart: pd.DataFrame):
         pass
 
 
-def assistant_page(mart: pd.DataFrame):
+def assistant_page(mart: pd.DataFrame, item_mart: pd.DataFrame):
     st.subheader("AI 分析助手")
     st.info("助手采用‘意图识别 → 受控分析函数 → DuckDB/指标计算 → AI 解释’流程。没有 API Key 时自动使用本地模板，不影响演示。")
     question = st.text_input("请输入业务问题", value="哪些地区的订单延迟率最高？")
     if st.button("开始分析", type="primary"):
-        answer = answer_question(mart, question)
+        answer = answer_question(mart, question, item_mart=item_mart)
         if not answer["validation"]["ok"]:
             st.warning(answer["validation"]["reason"])
             return
@@ -215,18 +232,20 @@ def abtest_page():
 def main():
     db_path = ensure_warehouse()
     mart = load_data(db_path)
+    item_mart = load_item_data(db_path)
     st.title("📈 Olist 电商经营分析 Copilot")
     st.caption("数据分析 + 机器学习 + 受控式 AI 辅助决策平台")
-    filtered = render_sidebar(mart)
+    filtered = render_sidebar(mart, item_mart)
+    filtered_items = item_mart[item_mart["order_id"].isin(filtered["order_id"])].copy()
     tabs = st.tabs(["经营总览", "商品与卖家", "履约与预测", "AI 分析助手", "A/B 测试"])
     with tabs[0]:
-        overview_page(filtered)
+        overview_page(filtered, filtered_items)
     with tabs[1]:
-        product_seller_page(filtered)
+        product_seller_page(filtered, filtered_items)
     with tabs[2]:
         delivery_page(filtered)
     with tabs[3]:
-        assistant_page(filtered)
+        assistant_page(filtered, filtered_items)
     with tabs[4]:
         abtest_page()
     st.divider()

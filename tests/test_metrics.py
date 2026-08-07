@@ -31,3 +31,23 @@ def test_calculate_kpis_uses_valid_delivered_orders_for_late_rate():
     assert round(result["late_delivery_rate"], 4) == round(1 / 3, 4)
     assert result["average_delivery_days"] == 5.0
     assert round(result["average_review_score"], 4) == round(11 / 3, 4)
+
+def test_monthly_trend_uses_same_paid_amount_definition_as_kpis():
+    from olist_copilot.analytics.services import monthly_trend
+
+    frame = pd.DataFrame(
+        {
+            "order_id": ["1", "2", "3"],
+            "order_status": ["delivered", "delivered", "canceled"],
+            "order_purchase_timestamp": pd.to_datetime(["2025-01-01", "2025-01-02", "2025-01-03"]),
+            "order_total_value": [100.0, 200.0, 999.0],
+            "freight_value": [10.0, 20.0, 99.0],
+            "late_flag": [0.0, 1.0, None],
+            "review_score": [5.0, 2.0, 1.0],
+        }
+    )
+
+    result = monthly_trend(frame)
+
+    assert result.iloc[0]["order_count"] == 2
+    assert result.iloc[0]["paid_amount"] == 330.0

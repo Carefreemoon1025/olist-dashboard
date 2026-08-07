@@ -26,3 +26,24 @@ def test_guardrails_reject_unknown_metric_and_dimension():
     result = validate_intent(invalid)
     assert result["ok"] is False
     assert "metric" in result["reason"]
+
+def test_guardrails_reject_boolean_limit_and_extra_fields():
+    from olist_copilot.ai.guardrails import validate_intent
+
+    boolean_limit = {"intent": "ranking", "metric": "order_count", "dimension": "customer_state", "limit": True}
+    extra_field = {"intent": "ranking", "metric": "order_count", "dimension": "customer_state", "limit": 10, "sql": "DROP TABLE"}
+
+    assert validate_intent(boolean_limit)["ok"] is False
+    assert validate_intent(extra_field)["ok"] is False
+
+def test_local_insight_fallback_includes_top_result_evidence(monkeypatch):
+    from olist_copilot.ai.llm_client import generate_insight
+
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    result = [{"customer_state": "SP", "late_delivery_rate": 0.42}]
+
+    text = generate_insight("哪些地区延迟率最高？", result, "订单延迟率")
+
+    assert "SP" in text
+    assert "0.4200" in text

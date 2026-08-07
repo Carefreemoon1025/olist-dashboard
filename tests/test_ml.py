@@ -50,3 +50,15 @@ def test_classifier_evaluation_is_reproducible():
 
     assert metrics["accuracy"] >= 0.0
     assert metrics["confusion_matrix"]
+
+def test_temporal_split_keeps_future_orders_out_of_training():
+    from olist_copilot.ml.late_delivery import temporal_split
+
+    features = pd.DataFrame({"x": range(8)})
+    target = pd.Series([0, 1, 0, 1, 0, 1, 0, 1], name="late_flag")
+    timestamps = pd.Series(pd.date_range("2025-01-01", periods=8, freq="D"))
+    train_x, test_x, train_y, test_y = temporal_split(features, target, timestamps, test_size=0.25)
+
+    assert train_x["x"].max() < test_x["x"].min()
+    assert len(train_y) == 6
+    assert len(test_y) == 2

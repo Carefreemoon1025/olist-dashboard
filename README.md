@@ -1,4 +1,4 @@
-﻿# Olist 电商经营分析 Copilot
+# Olist 电商经营分析 Copilot
 
 > 面向数据分析 / AI 应用岗位的可复现求职项目：用 SQL、Python、BI 可视化、机器学习和受控式大模型分析完成一条电商经营分析闭环。
 
@@ -49,6 +49,8 @@ Olist CSV
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+# 如果需要完全复现当前环境，可使用精确版本锁定文件：
+# pip install -r requirements-lock.txt
 pip install -e .
 ```
 
@@ -78,13 +80,17 @@ streamlit run app.py
 默认数据存放在：
 
 ```text
-data/raw/
-data/warehouse/olist.duckdb
+data/raw/                  # 用户真实 Olist CSV
+data/demo_raw/             # 固定随机种子的演示数据
+data/processed/            # Parquet 中间层
+data/warehouse/             # DuckDB 仓库
+data/warehouse/olist.duckdb      # 真实数据仓库
+data/warehouse/demo_olist.duckdb # 演示数据仓库
 ```
 
 ## 使用真实 Olist 数据
 
-将真实数据按 Kaggle Olist 的标准文件名放入 `data/raw/`：
+将真实数据按 Kaggle Olist 的标准文件名放入 `data/raw/`；`data/demo_raw/` 由演示数据脚本维护。
 
 ```text
 olist_orders_dataset.csv
@@ -104,7 +110,7 @@ python scripts\build_warehouse.py
 streamlit run app.py
 ```
 
-项目会优先读取完整的真实数据；如果数据不完整，应用会使用可复现的演示数据。
+项目会优先读取完整的真实数据；如果真实数据不完整，应用会在独立的 `data/demo_raw/` 中使用可复现的演示数据，不会覆盖 `data/raw/` 中的文件。仓库会记录源文件指纹，数据变化后自动重建。
 
 ## 可选：启用大模型分析
 
@@ -134,7 +140,8 @@ olist-analysis-copilot/
 ├── run.ps1
 ├── config/
 ├── data/
-│   ├── raw/
+│   ├── raw/                  # 用户真实 Olist CSV
+│   ├── demo_raw/             # 固定随机种子的演示数据
 │   ├── processed/
 │   └── warehouse/
 ├── src/olist_copilot/
